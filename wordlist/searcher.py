@@ -2,7 +2,6 @@ import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from time import sleep
-from time import time
 
 
 class Searcher:
@@ -34,11 +33,40 @@ class Searcher:
             counter = 1 if len(num) == 0 else len(num)
             mean_list = list()
             for i in range(counter):
-                meaning = doc.select('div.row > ul.mean_list > li.mean_item > p.mean')[i].get_text().strip().replace("\t","").splitlines()
+                # 유니코드 2219번을 인식하지 못하여 *기호로 대체
+                meaning = doc.select('div.row > ul.mean_list > li.mean_item > p.mean')[i].get_text().strip().replace("\t", "").replace("∙", "*").splitlines()
                 if len(meaning) == 3:
                     meaning.pop(1)
                 mean_list.append(meaning)
             self.voca_list.append([basic_word, mean_list])
             sleep(1)
         self.driver.close()
+
+    # 모든 전처리 과정을 끝내고 csv파일로 변경하려고보니 2차원 리스트가 아님. 2차원 리스트 형태로의 수정 필요.
+    def convert_to_2d_list(self):
+            object = self.voca_list.copy()
+            list_2d = list()
+            for i in range(len(object)):
+                word = object[i][0]
+                list_1d = list()
+                print("Out of index -> " + word)
+                for j in range(len(object[i][1])):
+                    if len(object[i][1][j]) == 2:
+                        parts_of_speech = object[i][1][j][0]
+                        meaning = object[i][1][j][1]
+                    elif len(object[i][1][j]) == 1:
+                        parts_of_speech = ""
+                        meaning = object[i][1][j][0]
+                    if j == 0:
+                        list_1d.extend([word, parts_of_speech, meaning])
+                        list_2d.append(list_1d)
+                        list_1d = list()
+                    else:
+                        list_1d.extend(["", parts_of_speech, meaning])
+                        list_2d.append(list_1d)
+                        list_1d = list()
+            self.voca_list = list_2d.copy()
+
+
+
 

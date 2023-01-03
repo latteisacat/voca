@@ -32,8 +32,3 @@ class Reader:
         sorted_data = sorted(no_stopword_list, key=lambda x: (-no_stopword_list.count(x), no_stopword_list.index(x)))
         self.data = list(dict.fromkeys(sorted_data))
 
-
-test = Reader("C:\\developer\\voca\\eng.txt")
-test.read_data()
-test.remove_stopwords()
-test.print_data()

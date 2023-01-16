@@ -6,11 +6,11 @@ from time import sleep
 
 class Searcher:
 
-    def __init__(self, search_list):
+    def __init__(self, search_list, web_driver_path):
         self.search_list = search_list
         self.voca_list = list()
         self.driver = webdriver.Chrome(
-            executable_path="./webdriver/chromedriver.exe"
+            executable_path=web_driver_path
             # 경로지정 시 유의사항
             # 해당 모듈을 호출하는 main.py기준으로 경로 지정
         )
@@ -39,7 +39,6 @@ class Searcher:
                     meaning.pop(1)
                 mean_list.append(meaning)
             self.voca_list.append([basic_word, mean_list])
-            sleep(1)
         self.driver.close()
 
     # 모든 전처리 과정을 끝내고 csv파일로 변경하려고보니 2차원 리스트가 아님. 2차원 리스트 형태로의 수정 필요.
@@ -49,7 +48,6 @@ class Searcher:
             for i in range(len(object)):
                 word = object[i][0]
                 list_1d = list()
-                print("Out of index -> " + word)
                 for j in range(len(object[i][1])):
                     if len(object[i][1][j]) == 2:
                         parts_of_speech = object[i][1][j][0]
